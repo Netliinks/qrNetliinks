@@ -213,7 +213,7 @@ export class SignIn {
                     data: newToken,
                     image: "./public/src/assets/pictures/qr.png",
                     dotsOptions: {
-                        color: "#002337FF",
+                        color: "#000000", //"#002337FF",
                         //type: "rounded"
                     },
                     backgroundOptions: {
