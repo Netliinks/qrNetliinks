@@ -70,6 +70,18 @@ export class SignIn {
         }
     }
     showQr(data) {
+        const rawDni = data?.dni ?? '';
+        //Ocultar lo de Fast para invitado rapido
+        const checkDni = rawDni.includes('-FAST');
+        let dni;
+        if (checkDni) {
+            let fastLimit = rawDni.indexOf('-FAST');
+            let dniDetected = rawDni.slice(0, fastLimit);
+            dni = dniDetected;
+        }
+        else {
+            dni = rawDni;
+        }
         loginContainer.innerHTML = '';
         loginContainer.style.display = 'flex !important';
         loginContainer.innerHTML = `
@@ -79,7 +91,7 @@ export class SignIn {
           <h1 class="login_title">QR VISITA</h1>
           <div class="input_detail">
             <label for="ingress-date"><i class="fa-solid fa-user"></i> ${data.firstName} ${data.firstLastName}</label><br>
-            <label for="ingress-date"><i class="fa-solid fa-address-card"></i> ${data.dni}</label><br>
+            <label for="ingress-date"><i class="fa-solid fa-address-card"></i> ${dni}</label><br>
             <label for="ingress-date"><i class="fa-solid fa-calendar"></i> ${data.creationDate}</label><br>
             <label for="ingress-date"><i class="fa-solid fa-heartbeat"></i> ${data.visitState.name}</label><br>
             <label for="ingress-date"><i class="fa-solid fa-share"></i> ${data.user.username}</label><br>
