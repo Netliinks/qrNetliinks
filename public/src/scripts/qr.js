@@ -75,9 +75,9 @@ export class SignIn {
         const checkDni = rawDni.includes('-FAST');
         let dni;
         if (checkDni) {
-            let fastLimit = rawDni.indexOf('-FAST');
-            let dniDetected = rawDni.slice(0, fastLimit);
-            dni = dniDetected;
+            //let fastLimit = rawDni.indexOf('-FAST')
+            //let dniDetected = rawDni.slice(0, fastLimit)
+            dni = '';
         }
         else {
             dni = rawDni;
