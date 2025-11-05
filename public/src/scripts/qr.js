@@ -90,11 +90,11 @@ export class SignIn {
           <img src="./public/src/assets/pictures/app_logo.png">
           <h1 class="login_title">QR VISITA</h1>
           <div class="input_detail">
-            <label for="ingress-date"><i class="fa-solid fa-user"></i> ${data.firstName} ${data.firstLastName}</label><br>
+            <label for="ingress-date"><i class="fa-solid fa-user"></i> ${data?.firstName ?? ''} ${data?.firstLastName ?? ''}</label><br>
             <label for="ingress-date"><i class="fa-solid fa-address-card"></i> ${dni}</label><br>
-            <label for="ingress-date"><i class="fa-solid fa-calendar"></i> ${data.creationDate}</label><br>
-            <label for="ingress-date"><i class="fa-solid fa-heartbeat"></i> ${data.visitState.name}</label><br>
-            <label for="ingress-date"><i class="fa-solid fa-share"></i> ${data.user.username}</label><br>
+            <label for="ingress-date"><i class="fa-solid fa-calendar"></i> ${data?.creationDate ?? ''}</label><br>
+            <label for="ingress-date"><i class="fa-solid fa-heartbeat"></i> ${data?.visitState?.name ?? ''}</label><br>
+            <label for="ingress-date"><i class="fa-solid fa-share"></i> ${data?.user?.firstName ?? ''} ${data?.user?.lastName ?? ''}</label><br>
           </div>
         </div>
         <div class="login_content">
@@ -106,6 +106,7 @@ export class SignIn {
         </div>
 
         <div class="login_footer">
+          <p>El código QR generado por minuto solo es válido para un único ingreso</p>
           <div class="foot_brief">
             <p>Desarrollado por</p>
             <img src="./public/src/assets/pictures/login_logo.png">
