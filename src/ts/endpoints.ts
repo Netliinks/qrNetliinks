@@ -1,18 +1,23 @@
 // @filename: endpoints.ts
 
 // Imports
+import "./config.js"
 import { SignIn } from "./qr.js"
 import { Endpoint, Request } from "./types.js"
 
 // GENERAL URL
 // ===================================================
-const NetliinksUrl: string = 'https://backend.netliinks.com:443/rest/entities/'
+export const NetliinkBase: string = window.APP_CONFIG?.baseUrl ?? 'https://backend.netliinks.com:443/'
+const NetliinksUrl: string = `${NetliinkBase}rest/entities/`
 // ===================================================
 
 // TOOLS
 // ===================================================
 export let token = localStorage.getItem('access_token')
 export const _userAgent = navigator.userAgent
+export const clientId: string = window.APP_CONFIG?.clientId ?? ''
+export const clientSecret: string = window.APP_CONFIG?.clientSecret ?? ''
+export const basicAuth: string = `Basic ${btoa(`${clientId}:${clientSecret}`)}`
 // ===================================================
 
 // HEADERS
@@ -32,8 +37,7 @@ headers.append('Cookie', "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF")
  * @returns token
  */
 export const getToken = async (mail: string, password: string): Endpoint => {
-    const URL: string =
-        'https://backend.netliinks.com:443/oauth/token'
+    const URL: string = `${NetliinkBase}oauth/token`
 
     const ReqOptions: {} = {
         method: 'POST',
@@ -41,7 +45,7 @@ export const getToken = async (mail: string, password: string): Endpoint => {
         headers: {
             Accept: 'application/json',
             "User-agent": `${_userAgent}`,
-            Authorization: 'Basic YzNjMDM1MzQ2MjoyZmM5ZjFiZTVkN2IwZDE4ZjI1YmU2NDJiM2FmMWU1Yg==',
+            Authorization: basicAuth,
             "Content-Type": 'application/x-www-form-urlencoded',
             Cookie: "JSESSIONID=CDD208A868EAABD1F523BB6F3C8946AF",
         }
@@ -60,7 +64,7 @@ export const getToken = async (mail: string, password: string): Endpoint => {
  */
 export const getUserInfo = async (): Endpoint => {
     const userInfo: Request = {
-        url: 'https://backend.netliinks.com:443/rest/userInfo?fetchPlan=full',
+        url: `${NetliinkBase}rest/userInfo?fetchPlan=full`,
         method: 'GET'
     }
 
@@ -169,7 +173,7 @@ export const deleteEntity = async (entities: string, entity: string): Endpoint =
 
 export const registerEntity = async (raw: any, type: string): Endpoint => {
     const req: Request = {
-        url: 'https://backend.netliinks.com:443/rest/entities/',
+        url: `${NetliinkBase}rest/entities/`,
         method: 'POST'
     }
 
@@ -189,7 +193,7 @@ export const filterEntities = async (user: any): Endpoint => { }
 
 export const setPassword = async (raw: string): Endpoint => {
     const req: Request = {
-        url: 'https://backend.netliinks.com:443/rest/services/UserServiceBean/updatePassword',
+        url: `${NetliinkBase}rest/services/UserServiceBean/updatePassword`,
         method: 'POST'
     }
 
@@ -208,7 +212,7 @@ export const setPassword = async (raw: string): Endpoint => {
 
 export const setUserRole = async (raw: string): Endpoint => {
     const req: Request = {
-        url: 'https://backend.netliinks.com:443/rest/services/UserServiceBean/assignRol',
+        url: `${NetliinkBase}rest/services/UserServiceBean/assignRol`,
         method: 'POST'
     }
 
@@ -227,7 +231,7 @@ export const setUserRole = async (raw: string): Endpoint => {
 
 export const sendMail = async (raw: string): Endpoint => {
     const req = {
-        url: 'https://backend.netliinks.com:443/rest/services/UserServiceBean/sendByEmailInfo',
+        url: `${NetliinkBase}rest/services/UserServiceBean/sendByEmailInfo`,
         method: 'POST'
     }
 
@@ -244,12 +248,12 @@ export const sendMail = async (raw: string): Endpoint => {
         .catch(error => console.log('error', error))
 }
 
-export const updateTokenVisit = async (id: string): Endpoint => {
+export const generateTokenVisit = async (id: string): Endpoint => {
     const raw = JSON.stringify({
         "id": `${id}`,
-    }) 
+    })
     const req = {
-        url: 'https://backend.netliinks.com:443/rest/services/UserServiceBean/updateTokenVisit',
+        url: `${NetliinkBase}rest/services/UserServiceBean/generateTokenVisit`,
         method: 'POST'
     }
 
@@ -260,12 +264,16 @@ export const updateTokenVisit = async (id: string): Endpoint => {
         redirect: 'follow'
     };
 
-    const res = await fetch(req.url, requestOptions);
-    return res;
+    const response = await fetch(req.url, requestOptions);
+    const body = await response.json();
+    if (!response.ok) {
+        throw new Error(body?.message || body?.error_description || 'No se pudo generar el QR de visita');
+    }
+    return body;
 }
 
 export const getFile = async (fileUrl: string): Endpoint => {
-    const url: string = 'https://backend.netliinks.com:443/rest/files?fileRef='
+    const url: string = `${NetliinkBase}rest/files?fileRef=`
 
     const requestOptions: {} = {
         method: 'GET',
@@ -284,7 +292,7 @@ export const getFile = async (fileUrl: string): Endpoint => {
 }
 
 export const setFile = async (file: File): Endpoint => {
-    const url: string = `https://backend.netliinks.com:443/rest/files?name=${file.name}`
+    const url: string = `${NetliinkBase}rest/files?name=${file.name}`
 
     const requestOptions: {} = {
         method: 'POST',

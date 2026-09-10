@@ -435,6 +435,21 @@ export const getSearch = async (param: string, value: string, table: string, dat
                 "value": `${value}`
               },
               {
+                "property": `business.state.name`,
+                "operator": "=",
+                "value": `Enabled`
+              },
+              {
+                "property": `customer.state.name`,
+                "operator": "=",
+                "value": `Enabled`
+              },
+              {
+                "property": `user.state.name`,
+                "operator": "=",
+                "value": `Enabled`
+              },
+              {
                 "property": `type`,
                 "operator": "=",
                 "value": `Cliente`
@@ -444,12 +459,22 @@ export const getSearch = async (param: string, value: string, table: string, dat
                 "operator": "<>",
                 "value": `Finalizado`
               },
-              {
-                "property": `creationDate`,
-                "operator": "=",
-                "value": `${date}`
-              },
-          ]
+                {
+                    "group": "OR",
+                    "conditions": [
+                        {
+                            "property": `creationDate`,
+                            "operator": "=",
+                            "value": `${date}`
+                        },
+                        {
+                            "property": `calculatedDate`,
+                            "operator": ">=",
+                            "value": `${date}`
+                        }
+                    ]
+                },
+            ]
       },
       fetchPlan: 'full',
       sort: '-createdDate'

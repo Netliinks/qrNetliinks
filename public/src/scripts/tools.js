@@ -389,6 +389,21 @@ export const getSearch = async (param, value, table, date) => {
                     "value": `${value}`
                 },
                 {
+                    "property": `business.state.name`,
+                    "operator": "=",
+                    "value": `Enabled`
+                },
+                {
+                    "property": `customer.state.name`,
+                    "operator": "=",
+                    "value": `Enabled`
+                },
+                {
+                    "property": `user.state.name`,
+                    "operator": "=",
+                    "value": `Enabled`
+                },
+                {
                     "property": `type`,
                     "operator": "=",
                     "value": `Cliente`
@@ -399,9 +414,19 @@ export const getSearch = async (param, value, table, date) => {
                     "value": `Finalizado`
                 },
                 {
-                    "property": `creationDate`,
-                    "operator": "=",
-                    "value": `${date}`
+                    "group": "OR",
+                    "conditions": [
+                        {
+                            "property": `creationDate`,
+                            "operator": "=",
+                            "value": `${date}`
+                        },
+                        {
+                            "property": `calculatedDate`,
+                            "operator": ">=",
+                            "value": `${date}`
+                        }
+                    ]
                 },
             ]
         },
