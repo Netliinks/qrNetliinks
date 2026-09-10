@@ -246,7 +246,6 @@ export class SignIn {
     }
 
     private intervalQr(data: any){
-        var counter = 10
         let i = 1;
         let change = async () => {
             // @ts-ignore
@@ -281,16 +280,28 @@ export class SignIn {
                     }*/
                 });
                 qrCode.append(document.getElementById("qrcode"))
-                if(i <= 3) contDown()
+                const qrDrawnAt = Date.now()
+                const durationSeconds = Number(response?.durationSeconds) || 60
+                const expiresAt = response?.expiresAt
+                    ? new Date(response.expiresAt).getTime()
+                    : 0
+                const remainingSeconds = expiresAt > 0
+                    ? Math.max(Math.ceil((expiresAt - qrDrawnAt) / 1000), 0)
+                    : Number(response?.remainingSeconds) || durationSeconds
+                if (expiresAt > 0 && remainingSeconds <= 0) {
+                    this.showReload()
+                    return
+                }
+                if(i <= 3) contDown(durationSeconds, remainingSeconds)
                 if(i < 3){
                     i++
-                    const expiresAt = response?.expiresAt
-                        ? new Date(response.expiresAt).getTime()
-                        : Date.now() + 60000
-                    counter = Math.max(expiresAt - Date.now(), 1000)
-                    setTimeout(change, counter)
+                    const delay = Math.max(
+                        expiresAt > 0 ? expiresAt - qrDrawnAt : remainingSeconds * 1000,
+                        1000)
+                    setTimeout(change, delay)
                 }else{
-                    setTimeout(() => this.showReload(), 60000)
+                    const delay = expiresAt > 0 ? expiresAt - qrDrawnAt : remainingSeconds * 1000
+                    setTimeout(() => this.showReload(), Math.max(delay, 1000))
                 }
                 
             })
@@ -300,7 +311,7 @@ export class SignIn {
             })
             
         }
-        setTimeout(change, counter)
+        setTimeout(change, 0)
 
         
     }

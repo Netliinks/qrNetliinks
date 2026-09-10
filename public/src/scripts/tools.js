@@ -275,7 +275,7 @@ export const registryPlataform = async (id) => {
         console.log("Registrado");
     });
 };
-export const contDown = () => {
+export const contDown = (durationSeconds = 60, remainingSeconds = durationSeconds) => {
     const FULL_DASH_ARRAY = 283;
     const WARNING_THRESHOLD = 20;
     const ALERT_THRESHOLD = 10;
@@ -292,9 +292,10 @@ export const contDown = () => {
             threshold: ALERT_THRESHOLD
         }
     };
-    const TIME_LIMIT = 60;
+    const TIME_LIMIT = Math.max(Number(durationSeconds) || 60, 1);
     let timePassed = 0;
-    let timeLeft = TIME_LIMIT;
+    let timeLeft = Math.max(Math.ceil(Number(remainingSeconds) || TIME_LIMIT), 0);
+    const deadline = Date.now() + timeLeft * 1000;
     let timerInterval = null;
     let remainingPathColor = COLOR_CODES.info.color;
     // @ts-ignore
@@ -325,13 +326,13 @@ export const contDown = () => {
     }
     function startTimer() {
         timerInterval = setInterval(() => {
-            timePassed = timePassed += 1;
-            timeLeft = TIME_LIMIT - timePassed;
+            timeLeft = Math.max(Math.ceil((deadline - Date.now()) / 1000), 0);
+            timePassed = TIME_LIMIT - timeLeft;
             // @ts-ignore
             document.getElementById("base-timer-label").innerHTML = formatTime(timeLeft);
             setCircleDasharray();
             setRemainingPathColor(timeLeft);
-            if (timeLeft === 0) {
+            if (timeLeft <= 0) {
                 onTimesUp();
             }
         }, 1000);
