@@ -381,6 +381,12 @@ export const contDown = (durationSeconds = 60, remainingSeconds = durationSecond
     }
 };
 export const getSearch = async (param, value, table, date) => {
+    const now = new Date();
+    const currentTime = [
+        now.getHours().toString().padStart(2, '0'),
+        now.getMinutes().toString().padStart(2, '0'),
+        now.getSeconds().toString().padStart(2, '0')
+    ].join(':');
     let raw = JSON.stringify({
         "filter": {
             "conditions": [
@@ -415,24 +421,77 @@ export const getSearch = async (param, value, table, date) => {
                     "value": `Finalizado`
                 },
                 {
-                    "group": "OR",
+                    "group": "AND",
                     "conditions": [
                         {
-                            "property": `creationDate`,
-                            "operator": "=",
-                            "value": `${date}`
+                            "group": "OR",
+                            "conditions": [
+                                {
+                                    "property": `creationDate`,
+                                    "operator": "<",
+                                    "value": `${date}`
+                                },
+                                {
+                                    "group": "AND",
+                                    "conditions": [
+                                        {
+                                            "property": `creationDate`,
+                                            "operator": "=",
+                                            "value": `${date}`
+                                        },
+                                        {
+                                            "property": `creationTime`,
+                                            "operator": "<=",
+                                            "value": `${currentTime}`
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "property": `calculatedDate`,
-                            "operator": ">=",
-                            "value": `${date}`
+                            "group": "OR",
+                            "conditions": [
+                                {
+                                    "property": `calculatedDate`,
+                                    "operator": "isNull"
+                                },
+                                {
+                                    "property": `calculatedDate`,
+                                    "operator": ">",
+                                    "value": `${date}`
+                                },
+                                {
+                                    "group": "AND",
+                                    "conditions": [
+                                        {
+                                            "property": `calculatedDate`,
+                                            "operator": "=",
+                                            "value": `${date}`
+                                        },
+                                        {
+                                            "group": "OR",
+                                            "conditions": [
+                                                {
+                                                    "property": `calculatedTime`,
+                                                    "operator": "isNull"
+                                                },
+                                                {
+                                                    "property": `calculatedTime`,
+                                                    "operator": ">=",
+                                                    "value": `${currentTime}`
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
             ]
         },
         fetchPlan: 'full',
-        sort: '-createdDate'
+        sort: '-creationDate,-creationTime,-createdDate'
     });
     let data = await getFilterEntityData(`${table}`, raw);
     if (data.length != 0) {
