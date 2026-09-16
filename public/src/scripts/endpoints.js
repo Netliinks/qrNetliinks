@@ -4,7 +4,7 @@ import "./config.js";
 import { SignIn } from "./qr.js";
 // GENERAL URL
 // ===================================================
-export const NetliinkBase = window.APP_CONFIG?.baseUrl ?? 'https://backend.netliinks.com:443/';
+export const NetliinkBase = window.APP_CONFIG?.baseUrl ?? 'https://backend4.netliinks.com:443/';
 const NetliinksUrl = `${NetliinkBase}rest/entities/`;
 // ===================================================
 // TOOLS

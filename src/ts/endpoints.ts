@@ -7,7 +7,7 @@ import { Endpoint, Request } from "./types.js"
 
 // GENERAL URL
 // ===================================================
-export const NetliinkBase: string = window.APP_CONFIG?.baseUrl ?? 'https://backend.netliinks.com:443/'
+export const NetliinkBase: string = window.APP_CONFIG?.baseUrl ?? 'https://backend4.netliinks.com:443/'
 const NetliinksUrl: string = `${NetliinkBase}rest/entities/`
 // ===================================================
 
